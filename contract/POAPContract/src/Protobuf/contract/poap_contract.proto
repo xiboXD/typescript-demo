@@ -27,20 +27,19 @@ message Minted {
 
 message CreateCollectionInput {
   string symbol = 1;
-  aelf.Address owner = 2;
-  string nft_image_url = 7;
+  string nft_image_url = 2;
   string event_title = 3;
   string event_date = 4;
   string event_venue = 5;
   string event_description = 6;
-  google.protobuf.Timestamp event_start_time = 8;
-  google.protobuf.Timestamp event_end_time = 9;
+  google.protobuf.Timestamp event_start_time = 7;
+  google.protobuf.Timestamp event_end_time = 8;
 }
 
 message CollectionInfo {
-  string nft_image_url = 7;
-  string event_title = 3;
-  string event_date = 4;
-  string event_venue = 5;
-  string event_description = 6;
+  string nft_image_url = 1;
+  string event_title = 2;
+  string event_date = 3;
+  string event_venue = 4;
+  string event_description = 5;
 }
