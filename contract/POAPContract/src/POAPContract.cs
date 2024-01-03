@@ -13,9 +13,13 @@ namespace AElf.Contracts.POAPContract
             {
                 return new Empty();
             }
-
+            // This is to reference multiToken contract
             State.TokenContract.Value =
                 Context.GetContractAddressByName(SmartContractConstants.TokenContractSystemName);
+            State.Admin.Value = Context.Sender;
+            State.CurrentNftIndex.Value = 1;
+            // For this version of the TokenContract system contract, the approve method needs to be called during initialization
+            // otherwise the TokenContract cannot be used properly
             State.TokenContract.Approve.Send(new ApproveInput
             {
                 Spender = State.TokenContract.Value,
@@ -28,14 +32,28 @@ namespace AElf.Contracts.POAPContract
 
         public override Empty CreateCollection(CreateCollectionInput input)
         {
+            Assert(State.Initialized.Value, "The contract has not been initialized yet");
+            Assert(Context.Sender == State.Admin.Value, "Only the admin user can create a collection.");
+            State.Symbol.Value = input.Symbol;
+            State.StartTime.Value = input.EventStartTime;
+            State.EndTime.Value = input.EventEndTime;
+            State.CollectionInfo.Value = new CollectionInfo()
+            {
+                EventTitle = input.EventTitle,
+                EventDate = input.EventDate,
+                EventVenue = input.EventVenue,
+                EventDescription = input.EventDescription,
+                NftImageUrl = input.NftImageUrl,
+            };
+            var symbolWithIndex = State.Symbol.Value + "-0";
             State.TokenContract.Create.Send(new CreateInput
             {
-                Symbol = input.Symbol,
+                Symbol = symbolWithIndex,
                 TokenName = input.Symbol + " collection",
                 TotalSupply = 1,
                 Decimals = 0,
-                Issuer = input.Issuer,
-                Owner = input.Issuer,
+                Issuer = Context.Self,
+                Owner = Context.Self,
                 IsBurnable = false,
                 ExternalInfo = new ExternalInfo()
                 {
@@ -51,16 +69,21 @@ namespace AElf.Contracts.POAPContract
             return new Empty();
         }
 
-        public override Empty Mint(MintInput input)
+        public override Empty Mint(Empty input)
         {
+            Assert(State.Initialized.Value, "The contract has not been initialized yet");
+            Assert(Context.CurrentBlockTime >= State.StartTime.Value, "The minting period has not started yet.");
+            Assert(Context.CurrentBlockTime < State.EndTime.Value, "The minting period has already concluded.");
+            
+            var symbolWithIndex = State.Symbol.Value + "-" + State.CurrentNftIndex.Value++;
             State.TokenContract.Create.Send(new CreateInput
             {
-                Symbol = input.Symbol,
-                TokenName = input.Symbol + " token",
+                Symbol = symbolWithIndex,
+                TokenName = symbolWithIndex + " token",
                 TotalSupply = 1,
                 Decimals = 0,
-                Issuer = input.Issuer,
-                Owner = input.Issuer,
+                Issuer = Context.Self,
+                Owner = Context.Self,
                 IsBurnable = false,
                 ExternalInfo = new ExternalInfo()
                 {
@@ -68,32 +91,37 @@ namespace AElf.Contracts.POAPContract
                     {
                         {
                             "__nft_image_url",
-                            input.NftImageUrl
+                            State.CollectionInfo.Value.NftImageUrl
                         },
                         {
                             "title",
-                            input.Title
+                            State.CollectionInfo.Value.EventTitle
                         },
                         {
                             "date",
-                            input.Date
+                            State.CollectionInfo.Value.EventDate
                         },
                         {
                             "venue",
-                            input.Venue
+                            State.CollectionInfo.Value.EventVenue
                         },
                         {
                             "description",
-                            input.Description
+                            State.CollectionInfo.Value.EventDescription
                         }
                     }
                 }
             });
             State.TokenContract.Issue.Send(new IssueInput
             {
-                Symbol = input.Symbol,
-                To = input.Issuer,
+                Symbol = symbolWithIndex,
+                To = Context.Sender,
                 Amount = 1
+            });
+            Context.Fire(new Minted
+            {
+                Symbol = symbolWithIndex,
+                Receiver = Context.Sender
             });
             return new Empty();
         }

@@ -26,11 +26,18 @@ namespace AElf.Contracts.POAPContract
     {
         // The Stub class for unit testing
         internal POAPContractContainer.POAPContractStub POAPContractStub;
+        internal POAPContractContainer.POAPContractStub POAPContractStub1;
+        internal POAPContractContainer.POAPContractStub POAPContractStub2;
+
         internal TokenContractContainer.TokenContractStub TokenContractStub;
         internal ACS0Container.ACS0Stub ZeroContractStub;
 
         protected ECKeyPair DefaultKeyPair => Accounts[0].KeyPair;
+        protected ECKeyPair User1 => Accounts[1].KeyPair;
+        protected ECKeyPair User2 => Accounts[2].KeyPair;
         protected Address DefaultAddress => Accounts[0].Address;
+        protected Address User1Address => Accounts[1].Address;
+        protected Address User2Address => Accounts[2].Address;
         protected Address POAPContractAddress;
         
         protected string SeedNFTSymbolPrefix = "SEED-";
@@ -48,6 +55,8 @@ namespace AElf.Contracts.POAPContract
             
             POAPContractAddress = Address.Parser.ParseFrom(result.TransactionResult.ReturnValue);
             POAPContractStub = GetPOAPContractContractStub(DefaultKeyPair);
+            POAPContractStub1 = GetPOAPContractContractStub(User1);
+            POAPContractStub2 = GetPOAPContractContractStub(User2);
             TokenContractStub = GetTokenContractStub(DefaultKeyPair);
         }
 
