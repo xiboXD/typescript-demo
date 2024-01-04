@@ -33,7 +33,6 @@ namespace AElf.Contracts.POAPContract
 
         private void CreateCollection(InitializeInput input)
         {
-            Assert(State.Initialized.Value, "The contract has not been initialized yet");
             Assert(Context.Sender == State.Admin.Value, "Only the admin user can create a collection.");
             State.Symbol.Value = input.Symbol;
             State.MintStartTime.Value = input.MintStartTime;
