@@ -11,21 +11,6 @@ namespace AElf.Contracts.HelloWorld
     public class HelloWorldTests : TestBase
     {
         [Fact]
-        public async Task Update_ShouldUpdateMessageAndFireEvent()
-        {
-            // Arrange
-            var inputValue = "Hello, World!";
-            var input = new StringValue { Value = inputValue };
-
-            // Act
-            await HelloWorldStub.Update.SendAsync(input);
-
-            // Assert
-            var updatedMessage = await HelloWorldStub.Read.CallAsync(new Empty());
-            updatedMessage.Value.ShouldBe(inputValue);
-        }
-        
-        [Fact]
         public async Task Rng_Test()
         {
             await HelloWorldStub.Initialize.SendAsync(new Empty());

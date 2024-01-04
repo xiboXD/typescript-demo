@@ -8,9 +8,6 @@ namespace AElf.Contracts.HelloWorld
     // The state class is used to communicate with the blockchain.
     public class HelloWorldState : ContractState
     {
-        // StringState is used to put the single data.
-        public StringState Message { get; set; }
-
         //create a storage space for Character
         public BoolState Initialized { get; set; }
         public MappedState<Address, Character> Characters { get; set; }
