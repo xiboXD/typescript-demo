@@ -13,9 +13,7 @@ service POAPContract {
   option (aelf.csharp_state) = "AElf.Contracts.POAPContract.POAPContractState";
   option (aelf.base) = "Protobuf/reference/acs12.proto";
   
-  rpc Initialize (google.protobuf.Empty) returns (google.protobuf.Empty) {
-  }
-  rpc CreateCollection (CreateCollectionInput) returns (google.protobuf.Empty) {
+  rpc Initialize (InitializeInput) returns (google.protobuf.Empty) {
   }
   rpc Mint (google.protobuf.Empty) returns (google.protobuf.Empty) {
   }
@@ -27,15 +25,15 @@ message Minted {
   aelf.Address receiver = 2;
 }
 
-message CreateCollectionInput {
+message InitializeInput {
   string symbol = 1;
   string nft_image_url = 2;
   string event_title = 3;
   string event_date = 4;
   string event_venue = 5;
   string event_description = 6;
-  google.protobuf.Timestamp event_start_time = 7;
-  google.protobuf.Timestamp event_end_time = 8;
+  google.protobuf.Timestamp mint_start_time = 7;
+  google.protobuf.Timestamp mint_end_time = 8;
 }
 
 message CollectionInfo {
