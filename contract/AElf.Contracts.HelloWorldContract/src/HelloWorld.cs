@@ -42,8 +42,6 @@ namespace AElf.Contracts.HelloWorld
 
         public override Character CreateCharacter(Empty input)
         {
-            var existing = State.Characters[Context.Sender];
-            Assert(existing == null, "already has a character");
             var randomBytes = State.RandomNumberContract.GetRandomBytes
                 .Call(new Int64Value { Value = Context.CurrentHeight - 1 }.ToBytesValue()).Value.ToByteArray();
             var hash = HashHelper.ComputeFrom(Context.Sender).Value.ToByteArray();
