@@ -1,10 +1,9 @@
 import { IPortkeyProvider, IChain } from "@portkey/provider-types";
 import { useEffect, useState } from "react";
 
-export type IContract = ReturnType<IChain["getContract"]>;
-
 function useSmartContract(provider: IPortkeyProvider | null) {
-  const [smartContract, setSmartContract] = useState<IContract>();
+  const [smartContract, setSmartContract] =
+    useState<ReturnType<IChain["getContract"]>>();
 
   useEffect(() => {
     (async () => {
@@ -15,11 +14,11 @@ function useSmartContract(provider: IPortkeyProvider | null) {
         const chain = await provider?.getChain("tDVW");
         if (!chain) throw new Error("No chain");
 
-        const address = "4CknAAWUdByDxrHVPM3F1PGPGSgwaFt7mSapxBifqsipMfqpm"; // replace with your deployed contract address
+        const address = "xqrvvgzTom5sbt5HTtiYSgxHoSAkdPK38D6iWmVvGpnoYrv7P";
 
-        // 2. get the contract
-        const contract = chain?.getContract(address);
-        setSmartContract(contract);
+        // 2. get the character contract
+        const characterContract = chain?.getContract(address);
+        setSmartContract(characterContract);
       } catch (error) {
         console.log(error, "====error");
       }
