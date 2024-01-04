@@ -12,6 +12,7 @@ service POAPContract {
   // The name of the state class the smart contract is going to use to access blockchain state
   option (aelf.csharp_state) = "AElf.Contracts.POAPContract.POAPContractState";
   option (aelf.base) = "Protobuf/reference/acs12.proto";
+  // This is required to denote this contract follows the default fee mechanism defined by acs12 aelf contract standard
   
   rpc Initialize (InitializeInput) returns (google.protobuf.Empty) {
   }
@@ -36,10 +37,11 @@ message InitializeInput {
   google.protobuf.Timestamp mint_end_time = 8;
 }
 
-message CollectionInfo {
+// this message is used to store the state of the contract
+message EventInfo {
   string nft_image_url = 1;
-  string event_title = 2;
-  string event_date = 3;
-  string event_venue = 4;
-  string event_description = 5;
+  string title = 2;
+  string date = 3;
+  string venue = 4;
+  string description = 5;
 }

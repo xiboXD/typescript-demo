@@ -13,10 +13,10 @@ namespace AElf.Contracts.POAPContract
             {
                 return new Empty();
             }
+
             // This is to reference multiToken contract
             State.TokenContract.Value =
                 Context.GetContractAddressByName(SmartContractConstants.TokenContractSystemName);
-            State.Admin.Value = Context.Sender;
             State.CurrentNftIndex.Value = 1;
             // For this version of the TokenContract system contract, the approve method needs to be called during initialization
             // otherwise the TokenContract cannot be used properly
@@ -33,17 +33,15 @@ namespace AElf.Contracts.POAPContract
 
         private void CreateCollection(InitializeInput input)
         {
-            Assert(Context.Sender == State.Admin.Value, "Only the admin user can create a collection.");
             State.Symbol.Value = input.Symbol;
             State.MintStartTime.Value = input.MintStartTime;
             State.MintEndTime.Value = input.MintEndTime;
-            State.CollectionInfo.Value = new CollectionInfo()
+            State.EventInfo.Value = new EventInfo
             {
-                EventTitle = input.EventTitle,
-                EventDate = input.EventDate,
-                EventVenue = input.EventVenue,
-                EventDescription = input.EventDescription,
-                NftImageUrl = input.NftImageUrl,
+                Title = input.EventTitle,
+                Date = input.EventDate,
+                Venue = input.EventVenue,
+                Description = input.EventDescription,
             };
             var symbolWithIndex = State.Symbol.Value + "-0";
             State.TokenContract.Create.Send(new CreateInput
@@ -73,7 +71,7 @@ namespace AElf.Contracts.POAPContract
             Assert(State.Initialized.Value, "The contract has not been initialized yet");
             Assert(Context.CurrentBlockTime >= State.MintStartTime.Value, "The minting period has not started yet.");
             Assert(Context.CurrentBlockTime < State.MintEndTime.Value, "The minting period has already concluded.");
-            
+
             var symbolWithIndex = State.Symbol.Value + "-" + State.CurrentNftIndex.Value++;
             State.TokenContract.Create.Send(new CreateInput
             {
@@ -90,23 +88,23 @@ namespace AElf.Contracts.POAPContract
                     {
                         {
                             "__nft_image_url",
-                            State.CollectionInfo.Value.NftImageUrl
+                            State.EventInfo.Value.NftImageUrl
                         },
                         {
                             "title",
-                            State.CollectionInfo.Value.EventTitle
+                            State.EventInfo.Value.Title
                         },
                         {
                             "date",
-                            State.CollectionInfo.Value.EventDate
+                            State.EventInfo.Value.Date
                         },
                         {
                             "venue",
-                            State.CollectionInfo.Value.EventVenue
+                            State.EventInfo.Value.Venue
                         },
                         {
                             "description",
-                            State.CollectionInfo.Value.EventDescription
+                            State.EventInfo.Value.Description
                         }
                     }
                 }
