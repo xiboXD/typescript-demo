@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IPortkeyProvider, MethodsBase } from "@portkey/provider-types";
 import "./App.css";
 import detectProvider from "@portkey/detect-provider";
+import SmartContract from "./SmartContract";
 
 function App() {
   const [provider, setProvider] = useState<IPortkeyProvider | null>(null);
@@ -29,6 +30,7 @@ function App() {
   return (
     <>
       <button onClick={connect}>Connect</button>
+      <SmartContract provider={provider} />
     </>
   );
 }
