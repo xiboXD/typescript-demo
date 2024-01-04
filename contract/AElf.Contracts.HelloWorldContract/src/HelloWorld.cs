@@ -50,7 +50,7 @@ namespace AElf.Contracts.HelloWorld
             {
                 Health = 60 + (randomBytes[0] ^ hash[0]) % 41, // Health is 60 ~ 100
                 Strength = 40 + (randomBytes[1] ^ hash[1]) % 61, // Strength is 40 ~ 100
-                Speed = 100 + (randomBytes[2] ^ hash[2]) % 101 // Strength is 100 ~ 200
+                Speed = 100 + (randomBytes[2] ^ hash[2]) % 101 // Speed is 100 ~ 200
             };
             State.Characters[Context.Sender] = character;
             return character;
