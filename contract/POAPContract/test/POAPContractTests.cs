@@ -18,38 +18,24 @@ namespace AElf.Contracts.POAPContract
         public async Task MintTests()
         {
             const string symbolName = "TEST";
-            await InitializeAsync();
+            await InitializeAsset();
             
             await CreateSeedNftCollection();
             var seedNftCreateInput = BuildSeedNftCreateInput(symbolName);
             await CreateSeedNft(seedNftCreateInput);
-
-            await TokenContractStub.Approve.SendAsync(new ApproveInput
-            {
-                Spender = DefaultAddress,
-                Symbol = "SEED-1",
-                Amount = 1
-            });
-            await TokenContractStub.TransferFrom.SendAsync(new TransferFromInput
-            {
-                From = DefaultAddress,
-                To = POAPContractAddress,
-                Symbol = "SEED-1",
-                Amount = 1
-            });
+            await TransferSeedToContract();
             
-            await CreateNftCollection(new CreateCollectionInput
+            await InitializeContract(new InitializeInput
             {
                 Symbol = symbolName,
-                EventStartTime = _currentTime.AddDays(-1),
-                EventEndTime = _currentTime.AddDays(1),
+                MintStartTime = _currentTime.AddDays(-1),
+                MintEndTime = _currentTime.AddDays(1),
                 NftImageUrl = "https://i.seadn.io/gcs/files/0f5cdfaaf687de2ebb5834b129a5bef3.png?auto=format&w=3840",
                 EventTitle = "WORKSHOP",
                 EventDate = "20240101",
                 EventVenue = "COM3",
                 EventDescription = "A WORKSHOP"
             });
-
             await POAPContractStub.Mint.SendAsync(new Empty());
             await POAPContractStub1.Mint.SendAsync(new Empty());
             await POAPContractStub2.Mint.SendAsync(new Empty());
@@ -73,15 +59,9 @@ namespace AElf.Contracts.POAPContract
             balance2.Balance.ShouldBe(1);
         }
         
-        private async Task InitializeAsync()
+        private async Task InitializeContract(InitializeInput input)
         {
-            await POAPContractStub.Initialize.SendAsync(new Empty());
-            await TokenContractStub.Transfer.SendAsync(new TransferInput
-            {
-                To = POAPContractAddress,
-                Symbol = "ELF",
-                Amount = 100000_00000000
-            });
+            await POAPContractStub.Initialize.SendAsync(input);
         }
 
         private async Task CreateSeedNftCollection()
@@ -139,9 +119,31 @@ namespace AElf.Contracts.POAPContract
             });
         }
 
-        private async Task CreateNftCollection(CreateCollectionInput input)
+        private async Task InitializeAsset()
         {
-            await POAPContractStub.CreateCollection.SendAsync(input);
+            await TokenContractStub.Transfer.SendAsync(new TransferInput
+            {
+                To = POAPContractAddress,
+                Symbol = "ELF",
+                Amount = 100000_00000000
+            });
+        }
+
+        private async Task TransferSeedToContract()
+        {
+            await TokenContractStub.Approve.SendAsync(new ApproveInput
+            {
+                Spender = DefaultAddress,
+                Symbol = "SEED-1",
+                Amount = 1
+            });
+            await TokenContractStub.TransferFrom.SendAsync(new TransferFromInput
+            {
+                From = DefaultAddress,
+                To = POAPContractAddress,
+                Symbol = "SEED-1",
+                Amount = 1
+            });
         }
     }
     

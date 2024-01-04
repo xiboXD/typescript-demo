@@ -12,7 +12,7 @@ namespace AElf.Contracts.POAPContract
         public StringState Symbol { get; set; }
         public UInt64State CurrentNftIndex { get; set; }
         public SingletonState<CollectionInfo> CollectionInfo { get; set; }
-        public SingletonState<Timestamp> StartTime { get; set; }
-        public SingletonState<Timestamp> EndTime { get; set; }
+        public SingletonState<Timestamp> MintStartTime { get; set; }
+        public SingletonState<Timestamp> MintEndTime { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace AElf.Contracts.POAPContract
     // Contract class must inherit the base class generated from the proto file
     public class POAPContract : POAPContractContainer.POAPContractBase
     {
-        public override Empty Initialize(Empty input)
+        public override Empty Initialize(InitializeInput input)
         {
             if (State.Initialized.Value)
             {
@@ -27,16 +27,16 @@ namespace AElf.Contracts.POAPContract
                 Amount = 100000_00000000,
             });
             State.Initialized.Value = true;
+            CreateCollection(input);
             return new Empty();
         }
 
-        public override Empty CreateCollection(CreateCollectionInput input)
+        private void CreateCollection(InitializeInput input)
         {
-            Assert(State.Initialized.Value, "The contract has not been initialized yet");
             Assert(Context.Sender == State.Admin.Value, "Only the admin user can create a collection.");
             State.Symbol.Value = input.Symbol;
-            State.StartTime.Value = input.EventStartTime;
-            State.EndTime.Value = input.EventEndTime;
+            State.MintStartTime.Value = input.MintStartTime;
+            State.MintEndTime.Value = input.MintEndTime;
             State.CollectionInfo.Value = new CollectionInfo()
             {
                 EventTitle = input.EventTitle,
@@ -66,14 +66,13 @@ namespace AElf.Contracts.POAPContract
                     }
                 }
             });
-            return new Empty();
         }
 
         public override Empty Mint(Empty input)
         {
             Assert(State.Initialized.Value, "The contract has not been initialized yet");
-            Assert(Context.CurrentBlockTime >= State.StartTime.Value, "The minting period has not started yet.");
-            Assert(Context.CurrentBlockTime < State.EndTime.Value, "The minting period has already concluded.");
+            Assert(Context.CurrentBlockTime >= State.MintStartTime.Value, "The minting period has not started yet.");
+            Assert(Context.CurrentBlockTime < State.MintEndTime.Value, "The minting period has already concluded.");
             
             var symbolWithIndex = State.Symbol.Value + "-" + State.CurrentNftIndex.Value++;
             State.TokenContract.Create.Send(new CreateInput
