@@ -1,4 +1,5 @@
 using AElf.Sdk.CSharp;
+using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
 namespace AElf.Contracts.HelloWorld
@@ -22,17 +23,17 @@ namespace AElf.Contracts.HelloWorld
 
             var character = new Character
             {
-                Health = 60 + (randomBytes[0] ^ hash[0]) % 41, // Health is 60 ~ 100
-                Strength = 40 + (randomBytes[1] ^ hash[1]) % 61, // Strength is 40 ~ 100
-                Speed = 100 + (randomBytes[2] ^ hash[2]) % 101 // Speed is 100 ~ 200
+                Health = 60 + (randomBytes[2] ^ hash[2]) % 41, // Health is 60 ~ 100
+                Strength = 40 + (randomBytes[3] ^ hash[3]) % 61, // Strength is 40 ~ 100
+                Speed = 100 + (randomBytes[4] ^ hash[4]) % 101 // Speed is 100 ~ 200
             };
             State.Characters[Context.Sender] = character;
             return character;
         }
 
-        public override Character GetMyCharacter(Empty input)
+        public override Character GetMyCharacter(Address input)
         {
-            return State.Characters[Context.Sender] ?? new Character();
+            return State.Characters[input] ?? new Character();
         }
     }
 }
