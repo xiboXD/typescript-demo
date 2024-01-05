@@ -1,4 +1,5 @@
 using AElf.Sdk.CSharp;
+using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
 namespace AElf.Contracts.HelloWorld
@@ -30,9 +31,9 @@ namespace AElf.Contracts.HelloWorld
             return character;
         }
 
-        public override Character GetMyCharacter(Empty input)
+        public override Character GetMyCharacter(Address input)
         {
-            return State.Characters[Context.Sender] ?? new Character();
+            return State.Characters[input] ?? new Character();
         }
     }
 }
