@@ -19,7 +19,7 @@ service HelloWorld {
   rpc CreateCharacter (google.protobuf.Empty) returns (Character);
 
   // Views
-  rpc GetMyCharacter (google.protobuf.Empty) returns (Character) {
+  rpc GetMyCharacter (aelf.Address) returns (Character) {
     option (aelf.is_view) = true;
   }
 }

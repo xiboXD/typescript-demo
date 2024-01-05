@@ -15,7 +15,7 @@ namespace AElf.Contracts.HelloWorld
         {
             await HelloWorldStub.Initialize.SendAsync(new Empty());
             var result = await HelloWorldStub.CreateCharacter.SendAsync(new Empty());
-            var character = await HelloWorldStub.GetMyCharacter.CallAsync(new Empty());
+            var character = await HelloWorldStub.GetMyCharacter.CallAsync(Accounts[0].Address);
             
             Assert.NotEqual(new Character(), character);
             Assert.Equal(result.Output, character);
